@@ -72,9 +72,90 @@ namespace ft {
                 assign(src.begin(), src.end());
             }
 
+        Vector  &operator=(const Vector &src) {
+            assign(src.begin(), src.end());
+            return (*this);
+        }
+
         ~Vector() {
             clear();
             this->_alloc.deallocate(this->_data, this->_capacity);
+        }
+
+        iterator begin() {
+            return (iterator(this->_data));
+        }
+
+        const_iterator begin() const {
+            return (const_iterator(this->_data));
+        }
+
+        iterator end() {
+            return (iterator(this->_data + this->_size));
+        }
+
+        const_iterator end() const {
+            return (const_iterator(this->_data + this->_size));
+        }
+
+        reverse_iterator rbegin() {
+            return (reverse_iterator(this->_data + this->_size - 1));
+        }
+
+        const_reverse_iterator rbegin() const {
+            return (const_reverse_iterator(this->_data + this->_size - 1));
+        }
+
+        reverse_iterator rend() {
+            return (reverse_iterator(this->_data - 1));
+        }
+
+        const_reverse_iterator rend() const {
+            return (const_reverse_iterator(this->_data - 1));
+        }
+
+        size_type size() const {
+            return (this->_size);
+        }
+
+        size_type max_size() const {
+            return (std::numeric_limits<size_type>::max() / sizeof(value_type));
+        }
+
+        void resize(size_t n, value_type val = value_type()) {
+            if (n <= this->_size) {
+                for (size_type i = n; i < this->_size; i++)
+                    this->_alloc.destroy(this->_data + i);
+            }
+            else {
+                if (n > this->_capacity)
+                    reserve(ft::max(n, this->_capacity * 2));
+                for (size_type i = this->_size; i < n; i++)
+                    this->_alloc.construct(this->_data + i, val);
+            }
+            this->_size = n;
+        }
+
+        size_type capacity() const {
+            return (this->_capacity);
+        }        
+
+        bool empty()const {
+            return (!this->_size);
+        }
+
+        void reserve(size_type n) {
+            if (n <= this->_capacity)
+                return ;
+            pointer dst = this->_alloc.allocate(n);
+            for (size_type i = 0; i < this->_size; i++)
+                this->_alloc.construct(dst + i; this->_data[i]);
+            for (size_type i = 0; i < this->_size; i++)
+                this->_alloc.destroy(this->_data + i);
+            if (this->_capacity)
+                this->_alloc.deallocate(this->_data, this->_capacity);
+            this->_capacity = n;
+            this->_data = dst;
         }
     }
 }
